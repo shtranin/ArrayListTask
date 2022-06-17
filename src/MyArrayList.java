@@ -1,7 +1,9 @@
+
+
 /**
  * Реализация MyArrayList
  */
-public class MyArrayList<E> implements MyList{
+public class MyArrayList<E> implements MyList<E>{
     private static final int INIT_CAPACITY = 16;
     private Object[] data;
     private int capacity;
@@ -29,6 +31,29 @@ public class MyArrayList<E> implements MyList{
         data[size++] = o;
         return true;
     }
+    /**
+     * Переопределенный toString, позволяющий отобразить все элементы нашего списка в одной строке, разделенные пробелом.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < size(); i++) {
+            builder.append(get(i) + "  ");
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Добавление всех эллементов из данной коллекции в текущий список
+     */
+    @Override
+    public <E> boolean addAll(MyList<E> o){
+        for (int i = 0; i < o.size(); i++) {
+            this.add(o.get(i));
+        }
+        return true;
+    }
+
 
 
     /**
@@ -91,7 +116,7 @@ public class MyArrayList<E> implements MyList{
      * Получение элемента по индексу
      */
     @Override
-    public Object get(int index) {
+    public E get(int index) {
         if ((index < size) && (index >= 0)) {
             return (E) data[index];
         }
@@ -134,7 +159,6 @@ public class MyArrayList<E> implements MyList{
             return false;
         }
 
-
     private void increaseCapacity(){
     capacity = capacity * 2;
     Object[] newArray = new Object[capacity];
@@ -146,10 +170,35 @@ public class MyArrayList<E> implements MyList{
 
 
     /**
-     * Быстрая сортировка
+     * Метод возвращает отсортированный список методом Quick Sort
      */
-    @Override
-    public void quickSort() {
+    public static <T extends Comparable<? super T>> MyArrayList<T> quickSort(MyArrayList<T> list) {
+        if (list.isEmpty()) {
+            return list;
+        }
+        MyArrayList<T> sorted;
+        MyArrayList<T> smaller = new MyArrayList<>();
+        MyArrayList<T> greater = new MyArrayList<>();
+        T pivot =  list.get(0);
+        int i;
+        T j;
+        for (i=1;i<list.size();i++)
+        {
+            j= list.get(i);
+            if (j.compareTo(pivot) > 0)
+                greater.add(j);
+            else
+                smaller.add(j);
 
+        }
+        smaller=quickSort(smaller);
+        greater=quickSort(greater);
+        smaller.add(pivot);
+        smaller.addAll(greater);
+        sorted = smaller;
+
+        return sorted;
     }
+
+
 }
